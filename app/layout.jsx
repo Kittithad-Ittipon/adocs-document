@@ -15,7 +15,7 @@ const navbar = (
   <Navbar
     logo={<b>ADOCS</b>}
     logoLink="https://adocs.addp.site"
-    projectLink="https://github.com/a-kittithad-itthipon/document.git"
+    projectLink="https://github.com/Kittithad-Ittipon/adocs-document.git"
   />
 );
 
@@ -53,7 +53,7 @@ export default async function RootLayout({ children }) {
         <Layout
           navbar={navbar}
           pageMap={await getPageMap()}
-          docsRepositoryBase="https://github.com/a-kittithad-itthipon/document"
+          docsRepositoryBase="https://github.com/Kittithad-Ittipon/adocs-document"
           sidebar={{ defaultMenuCollapseLevel: 1, toggleButton: false }}
           editLink={null}
           // navigation={false}
