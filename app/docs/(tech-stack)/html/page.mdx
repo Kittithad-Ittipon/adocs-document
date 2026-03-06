@@ -1,5 +1,6 @@
 import { FileTree } from "nextra/components";
 import { Callout, Steps, Tabs } from "nextra/components";
+import { EmbedYoutube } from "@/components/embed-youtube";
 
 # HTML
 
@@ -8,6 +9,8 @@ import { Callout, Steps, Tabs } from "nextra/components";
 เช่น **Nginx** เพื่อให้บริการไฟล์ HTML ผ่านโปรโตคอล HTTP
 
 ---
+
+<EmbedYoutube id="jp_CvlPMFvE" />
 
 ## Project Structure
 
@@ -72,21 +75,25 @@ import { Callout, Steps, Tabs } from "nextra/components";
   **หมายเหตุการระบุพอร์ต** เนื่องจากระบบใช้การระบุตัวตนผ่าน **Local DNS**
   ของแพลตฟอร์ม บริการ Nginx รันบน Port 80 ภายในเครือข่ายโดยตรง โดยไม่ต้องทำการ
   Map Port (Port Forwarding) ออกมายังภายนอก
+  สามารถตรวจสอบวิธีการตั้งค่าการเปิด Port ของแต่ละภาษาและเฟรมเวิร์กเพิ่มเติม ได้จากเอกสารอ้างอิง  
+  **Official Documentation:** [docs.nginx.com/nginx/admin-guide](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/)
 </Callout>
+
+### Image
+
+ข้อมูล Image nginx โดยสามารถเลือกใช้ Image เวอร์ชันอื่นๆได้
+
+* **Doker Hub:** [hub.docker.com/_/nginx/tags](https://hub.docker.com/_/nginx/tags)
 
 ### Upload On Platform
 
 ```yaml filename="docker-compose.yml"
-version: "3.8"
-
+version: '3.8'
 services:
-  express:
-    image: node:18-alpine
-    working_dir: /app
+  web:
+    image: nginx:1.28.2-alpine
     volumes:
-      - ./app:/app
-    command: >
-      sh -c "npm install && node index.js"
+      - ./html:/usr/share/nginx/html
     restart: unless-stopped
     networks:
       - lan-net
@@ -104,43 +111,31 @@ networks:
 
 ```yaml filename="docker-compose.yml"
 # ระบุเวอร์ชันของรูปแบบไฟล์ Docker Compose
-# ระบุเวอร์ชันของรูปแบบไฟล์ Docker Compose
 version: "3.8"
 
 services:
-  # บริการ Web Server สำหรับรัน Node.js Express Application
-  express:
-    # ใช้ Node.js 18 รุ่น alpine (ขนาดเล็ก) เป็นฐาน
-    image: node:18-alpine
+  # บริการ Web Server สำหรับเผยแพร่เว็บไซต์ Static HTML
+  web:
+    # เลือกใช้ Nginx เวอร์ชัน alpine ที่มีขนาดเล็กและใช้ทรัพยากรน้อย
+    image: nginx:1.28.2-alpine
 
-    # กำหนดชื่อคอนเทนเนอร์เพื่อให้ง่ายต่อการจัดการ
-    container_name: express-app
-
-    # กำหนดไดเรกทอรีทำงานหลักภายใน Container
-    working_dir: /app
-
-    # เชื่อมต่อโฟลเดอร์ Source Code จากเครื่องแม่ข่ายเข้าสู่คอนเทนเนอร์
+    # เชื่อมโยงโฟลเดอร์ html จากเครื่องโฮสต์ไปยังตำแหน่ง Root ของ Nginx
     volumes:
-      - ./app:/app
+      - ./html:/usr/share/nginx/html
 
-    # คำสั่งรันเมื่อเริ่ม Container (ติดตั้ง npm packages และสั่งรันแอป)
-    # ใช้เทคนิคนี้เพื่อลดขั้นตอนการสร้าง Dockerfile
-    command: >
-      sh -c "npm install && node index.js"
-
-    # กำหนดให้คอนเทนเนอร์เริ่มทำงานใหม่อัตโนมัติเมื่อเกิดข้อผิดพลาด
+    # ตั้งค่าให้ Resart อัตโนมัติและสามรถสั่งหยุดได้
     restart: unless-stopped
 
     # เชื่อมต่อคอนเทนเนอร์เข้ากับเครือข่ายที่กำหนด
     networks:
       - lan-net
 
-    # เปิดพอร์ตภายในคอนเทนเนอร์สำหรับการสื่อสารภายในเครือข่าย Docker
+    # เปิดพอร์ต 80 สำหรับการสื่อสารภายในเครือข่าย Docker
     expose:
-      - "3000"
+      - "80"
 
 networks:
-  # กำหนดเครือข่าย Docker ที่สร้างไว้ล่วงหน้า
+  # อ้างอิงเครือข่าย lan-net ที่ถูกสร้างไว้ภายนอก (External Network)
   lan-net:
     external: true
 ```

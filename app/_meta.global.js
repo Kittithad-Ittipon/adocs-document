@@ -1,5 +1,6 @@
 const system_deployment = {
   "start": "",
+  "docker-app": "",
   "general": "",
   "feature": {
     items: {

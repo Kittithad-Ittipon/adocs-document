@@ -1,10 +1,13 @@
 import { FileTree, Callout } from "nextra/components";
+import { EmbedYoutube } from "@/components/embed-youtube";
 
 # Flask
 
 เอกสารฉบับนี้อธิบายแนวทางการติดตั้งใช้งาน (Deployment) เว็บแอปพลิเคชันที่พัฒนาด้วย **Python Flask** โดยอาศัย **Docker Compose** ในการบริหารจัดการสภาพแวดล้อม (Environment)
 
 ---
+
+<EmbedYoutube id="cef99BP65FA" />
 
 ## Project Structure
 
@@ -97,22 +100,37 @@ if __name__ == '__main__':
   **หมายเหตุการระบุพอร์ต** เนื่องจากระบบใช้การระบุตัวตนผ่าน **Local DNS**
   ของแพลตฟอร์ม บริการ Flask รันบน Port 5000 ภายในเครือข่ายโดยตรง โดยไม่ต้องทำการ
   Map Port (Port Forwarding) ออกมายังภายนอก
+  สามารถตรวจสอบวิธีการตั้งค่าการเปิด Port ของแต่ละภาษาและเฟรมเวิร์กเพิ่มเติม ได้จากเอกสารอ้างอิง  
+  **Official Documentation:** [flask.palletsprojects.com](https://flask.palletsprojects.com/en/stable/quickstart/)
 </Callout>
+
+### Image
+
+ข้อมูล Image python โดยสามารถเลือกใช้ Image เวอร์ชันอื่นๆได้
+
+* **Doker Hub:** [hub.docker.com/_/python/tags](https://hub.docker.com/_/python/tags)
 
 ### Upload On Platform
 
 ```yaml filename="docker-compose.yml"
 version: "3.8"
-
 services:
   flask:
-    image: python:3.9-slim
-    working_dir: /app
-    volumes:
-      - ./app:/app
-    command: >
-      sh -c "pip install --no-cache-dir -r requirements.txt && python app.py"
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM python:3.13-slim
+
+        WORKDIR /app
+
+        COPY ./app/requirements.txt ./
+        RUN pip install --no-cache-dir -r requirements.txt
+
+        COPY ./app .
+        CMD ["python", "app.py"]
+
     restart: unless-stopped
+
     networks:
       - lan-net
 
@@ -122,7 +140,6 @@ networks:
 ```
 
 <Callout type="warning">
-  {" "}
   external: true คือการเข้าร่วม Network ชื่อ lan-net ที่ถูกสร้างไว้เเล้ว{" "}
 </Callout>
 
@@ -131,42 +148,47 @@ networks:
 ```yaml filename="docker-compose.yml"
 # ระบุเวอร์ชันของรูปแบบไฟล์ Docker Compose
 version: "3.8"
-
 services:
   # บริการ Web Server สำหรับรัน Python Flask Application
   flask:
-    # ใช้ Python 3.9 รุ่น slim (ขนาดเล็ก) เป็นฐาน
-    image: python:3.9-slim
+    # ส่วนการกำหนดค่าเพื่อสร้าง Image (Inline Dockerfile)
+    build:
+      context: . # ขอบเขตการ Build คือไดเรกทอรีปัจจุบัน
+      dockerfile_inline: |
+        # ใช้ Python 3.13 รุ่น slim (ขนาดเล็ก)
+        FROM python:3.13-slim
 
-    # กำหนดชื่อคอนเทนเนอร์เพื่อให้ง่ายต่อการจัดการ
+        # กำหนดไดเรกทอรีทำงานภายใน Container
+        WORKDIR /app
+
+        # 1. Copy requirements.txt เพื่อใช้ประโยชน์จาก Docker Cache
+        COPY ./app/requirements.txt ./
+
+        # 2. ติดตั้ง Library ที่จำเป็น
+        RUN pip install --no-cache-dir -r requirements.txt
+
+        # 3. Copy Source Code ทั้งหมด
+        COPY ./app .
+
+        # คำสั่งรัน Flask Application
+        CMD ["python", "app.py"]
+
+    # ตั้งชื่อ Container
     container_name: flask-app
 
-    # กำหนดไดเรกทอรีทำงานหลักภายใน Container
-    working_dir: /app
-
-    # เชื่อมต่อโฟลเดอร์ Source Code จากเครื่องแม่ข่ายเข้าสู่คอนเทนเนอร์
-    volumes:
-      - ./app:/app
-
-    # คำสั่งรันเมื่อเริ่ม Container (ติดตั้ง Library และสั่งรันแอป)
-    # ใช้เทคนิคนี้เพื่อลดขั้นตอนการสร้าง Dockerfile
-    command: >
-      sh -c "pip install --no-cache-dir -r requirements.txt && 
-             python app.py"
-
-    # กำหนดให้คอนเทนเนอร์เริ่มทำงานใหม่อัตโนมัติเมื่อเกิดข้อผิดพลาด
+    # ให้ Container restart อัตโนมัติ
     restart: unless-stopped
 
-    # เชื่อมต่อคอนเทนเนอร์เข้ากับเครือข่ายที่กำหนด
-    networks:
-      - lan-net
-
-    # เปิดพอร์ตภายในคอนเทนเนอร์สำหรับการสื่อสารภายในเครือข่าย Docker
+    # เปิดพอร์ตภายใน Container (ไม่ map ออก Host)
     expose:
       - "5000"
 
+    # เชื่อมต่อกับ Docker Network
+    networks:
+      - lan-net
+
 networks:
-  # กำหนดเครือข่าย Docker ที่สร้างไว้ล่วงหน้า
+  # Docker Network ที่สร้างไว้ล่วงหน้า
   lan-net:
     external: true
 ```
