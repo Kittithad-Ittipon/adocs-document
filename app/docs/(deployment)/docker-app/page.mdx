@@ -439,7 +439,7 @@ users:
 เป็นส่วนของระบบที่ใช้สำหรับแสดงผลส่วนติดต่อผู้ใช้ **(User Interface)** ของแพลตฟอร์ม โดยพัฒนาด้วย **Next.js** ซึ่งเป็นเฟรมเวิร์กที่สร้างขึ้นบน React เพื่อใช้ในการพัฒนาเว็บแอปพลิเคชันสมัยใหม่
 **Frontend** มีหน้าที่หลักในการแสดงหน้าเว็บให้ผู้ใช้งานสามารถโต้ตอบกับระบบได้ เช่น การเข้าสู่ระบบ การจัดการโปรเจกต์ และการดูข้อมูลต่าง ๆ ของระบบ โดยจะทำการส่งคำขอ **(API Request)** ไปยัง Backend และแสดงผลข้อมูลที่ได้รับกลับมาให้กับผู้ใช้งานผ่าน Broswer
 
-**Docker Image :** [Frontend Image](https://hub.docker.com/repository/docker/adocsdeploy/next/general)
+**Docker Image :** [Frontend Image](https://hub.docker.com/r/adocsdeploy/next)
 
 ```bash filename="adocs/next"
 version: "3.8"
@@ -469,7 +469,7 @@ JWT_SECRET_KEY=
 เป็นส่วนที่ทำหน้าที่ประมวลผลและจัดการตรรกะการทำงานของระบบ โดยพัฒนาด้วย **Flask** ซึ่งเป็นเฟรมเวิร์กสำหรับพัฒนา **Web API** ด้วยภาษา **Python**
 ภายในระบบมีการใช้งาน **Celery** สำหรับจัดการงานที่ทำงานเบื้องหลัง **(Background Tasks)** เช่น การประมวลผลหรือการทำงานที่ใช้เวลานาน และใช้ **Redis** เป็นตัวกลางในการจัดคิวงานและเก็บข้อมูลชั่วคราว เพื่อช่วยให้ระบบสามารถทำงานได้อย่างมีประสิทธิภาพและรองรับการทำงานหลายคำสั่งพร้อมกันได้
 
-**Docker Image :** [Backend Image](https://hub.docker.com/repository/docker/adocsdeploy/flask/general)
+**Docker Image :** [Backend Image](https://hub.docker.com/r/adocsdeploy/flask)
 
 ```bash filename="adocs/flask"
 version: "3.8"
@@ -537,7 +537,7 @@ NPM_PASSWORD=
 **Nextra** เป็นเฟรมเวิร์กสำหรับสร้างเว็บไซต์เอกสาร **(Documentation Website)** ที่ถูกพัฒนาขึ้นมาให้ใช้งานร่วมกับ **Next.js** โดยเฉพาะ ช่วยให้สามารถสร้างเว็บไซต์เอกสารจากไฟล์ **Markdown** (.md / .mdx) ได้อย่างสะดวก เช่น การเขียนคู่มือการติดตั้ง คู่มือการใช้งาน หรือเอกสารของระบบต่าง ๆ โดยไม่ต้องพัฒนา **UI** ของเว็บเอกสารใหม่ทั้งหมด
 เฟรมเวิร์กนี้มีระบบสำเร็จรูปสำหรับเว็บไซต์เอกสาร เช่น โครงสร้างเมนูอัตโนมัติ ระบบค้นหา การแสดงโค้ด และการจัดรูปแบบหน้าเอกสาร ทำให้สามารถสร้างเว็บไซต์เอกสารได้รวดเร็วและเป็นระเบียบ
 
-**Docker Image :** [Document Image](https://hub.docker.com/repository/docker/adocsdeploy/document/general)
+**Docker Image :** [Document Image](https://hub.docker.com/r/adocsdeploy/document)
 
 ```bash filename="adocs/document"
 version: "3.8"
