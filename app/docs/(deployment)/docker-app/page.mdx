@@ -446,7 +446,7 @@ version: "3.8"
 services:
   next-app-frontend:
     container_name: next-app-frontend
-    image: adocs/next:1.0
+    image: adocsdeploy/next:2.0
     restart: unless-stopped
     env_file:
       - ./.env
@@ -476,7 +476,7 @@ version: "3.8"
 services:
   flask-app-api-backend:
     container_name: flask-app-api-backend
-    image: adocs/flask:1.0
+    image: adocsdeploy/flask:1.1
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock 
@@ -499,7 +499,7 @@ services:
 
   celery-worker:
     container_name: celery-worker
-    image: adocs/flask:1.0
+    image: adocsdeploy/flask:1.1
     restart: unless-stopped
     command: celery -A tasks worker --loglevel=info --concurrency=12 --max-tasks-per-child=1 --prefetch-multiplier=1 -O fair
     volumes:
@@ -544,7 +544,7 @@ version: "3.8"
 services:
   doc-app:
     container_name: document
-    image: adocs/document:1.0
+    image: adocsdeploy/document:1.1
     environment:
       - NODE_ENV=production
     restart: unless-stopped
