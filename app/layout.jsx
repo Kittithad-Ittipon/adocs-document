@@ -13,8 +13,7 @@ export const metadata = {
 
 const navbar = (
   <Navbar
-    logo={<b>ADOCS</b>}
-    logoLink="https://adocs.addp.site"
+    logo={<b className="text-2xl">ADOCS</b>}
     projectLink="https://github.com/Kittithad-Ittipon/adocs-document.git"
   />
 );
