@@ -8,7 +8,7 @@ First, run the development server:
 ```bash
 npm install
 # or
-npm install
+pnpm install
 ```
 
 2. Development Mode
